@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  height:100vh;
+  background:black;
+  overflow:hidden;
+}
+
+canvas{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<script>
+
+const canvas = document.getElementById("matrix");
+const ctx = canvas.getContext("2d");
+
+const fontSize = 14;
+let columns;
+let drops;
+let hue = 0;
+
+function resizeCanvas(){
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  columns = Math.floor(canvas.width / fontSize);
+  drops = new Array(columns).fill(1);
+}
+
+function draw(){
+
+  ctx.fillStyle = "rgba(0,0,0,0.1)";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  ctx.font = fontSize + "px monospace";
+
+  const gradient = ctx.createLinearGradient(0,0,canvas.width,0);
+
+  gradient.addColorStop(0,`hsl(${hue},100%,50%)`);
+  gradient.addColorStop(1,`hsl(${(hue+60)%360},100%,50%)`);
+
+  ctx.fillStyle = gradient;
+
+  for(let i=0;i<drops.length;i++){
+
+    const text = Math.random() > 0.5 ? "0" : "1";
+
+    ctx.fillText(text,i*fontSize,drops[i]*fontSize);
+
+    if(drops[i]*fontSize > canvas.height && Math.random() > 0.975){
+      drops[i] = 0;
+    }
+
+    drops[i]++;
+
+  }
+
+  hue = (hue + 0.5) % 360;
+
+}
+
+function animate(){
+  draw();
+  requestAnimationFrame(animate);
+}
+
+window.addEventListener("resize",resizeCanvas);
+
+resizeCanvas();
+animate();
+
+</script>
+
+</body>
+</html>
